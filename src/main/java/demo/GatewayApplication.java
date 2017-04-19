@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -17,13 +20,22 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.session.data.redis.RedisFlushMode;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
-@Controller
+@RestController
 @EnableZuulProxy
+@EnableRedisHttpSession(redisFlushMode=RedisFlushMode.IMMEDIATE)
+
+@EnableDiscoveryClient
+
+
+
 public class GatewayApplication {
 
 	@RequestMapping("/user")
@@ -76,5 +88,11 @@ public class GatewayApplication {
 			// @formatter:on
 		}
 	}
+	
+	
+	@Bean
+  public SessionSavingZuulPreFilter simpleFilter() {
+    return new SessionSavingZuulPreFilter();
+  }
 
 }
