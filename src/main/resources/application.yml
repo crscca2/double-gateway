@@ -1,0 +1,19 @@
+logging:
+  level:
+    org.springframework.security: DEBUG
+security:
+  sessions: ALWAYS
+spring:
+  session:
+    store-type: redis
+zuul:
+  routes:
+    ui:
+      url: http://${ui_secret_ip:localhost}:${ui_secret_port:8081}
+      sensitive-headers:
+    admin:
+      url: http://${admin_secret_ip:localhost}:${admin_secret_port:8082}
+      sensitive-headers:
+    resource:
+      url: http://${resource_secret_ip:localhost}:${resource_secret_port:9001}
+      sensitive-headers:
